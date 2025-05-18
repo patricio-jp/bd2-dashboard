@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio | Sistema de Gestión</title>
-  <!-- Tailwind -->
+  <title>Compras | Sistema de Gestión</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
     html, body { width: 100%; max-width: 100vw; overflow-x: hidden; }
@@ -20,9 +19,9 @@
         </div>
         <nav class="flex-1 p-4">
           <ul class="space-y-2">
-            <li><a href="index.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700 font-medium">Dashboard</a></li>
+            <li><a href="index.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Dashboard</a></li>
             <li><a href="ventas.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Ventas</a></li>
-            <li><a href="compras.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Compras</a></li>
+            <li><a href="compras.html" class="block px-4 py-2 rounded bg-gray-200 text-gray-700 font-medium">Compras</a></li>
             <li><a href="listado-productos.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Inventario</a></li>
           </ul>
         </nav>
@@ -37,50 +36,52 @@
       <!-- Header -->
       <header class="flex items-center justify-between bg-white shadow px-4 py-4">
         <div class="flex items-center">
-          <!-- Sidebar toggle button (mobile only) -->
           <button id="sidebar-toggle" class="md:hidden mr-3 text-gray-600 focus:outline-none">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </button>
-          <h1 class="text-2xl font-bold text-gray-800">Panel de Control</h1>
+          <h1 class="text-2xl font-bold text-gray-800">Compras</h1>
         </div>
       </header>
 
-      <main class="p-4 w-full max-w-full">
-        <!-- Resumen de estadísticas -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <main class="p-4 w-full max-w-full overflow-x-auto">
+        <!-- Resumen de ventas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <span class="text-gray-500">Ventas del mes</span>
-            <span class="text-2xl font-bold text-green-600">$120,000</span>
+            <span class="text-gray-500">Total Compras</span>
+            <span class="text-2xl font-bold text-green-600">$1,200,000</span>
           </div>
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <span class="text-gray-500">Compras del mes</span>
-            <span class="text-2xl font-bold text-blue-600">$80,000</span>
+            <span class="text-2xl font-bold text-blue-600">$120,000</span>
           </div>
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <span class="text-gray-500">Stock total</span>
-            <span class="text-2xl font-bold text-yellow-600">3,500</span>
+            <span class="text-gray-500">Compras del día</span>
+            <span class="text-2xl font-bold text-yellow-600">$5,000</span>
           </div>
         </div>
 
         <!-- Gráfico de ejemplo -->
-        <div class="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 class="text-lg font-semibold mb-4 text-gray-700">Evolución de Ventas y Compras</h2>
+        <div class="bg-white rounded-lg shadow p-6 mb-4">
+          <h2 class="text-lg font-semibold mb-4 text-gray-700">Evolución de Compras</h2>
           <div class="w-full h-48 flex items-center justify-center text-gray-400">
-            [Aquí iría un gráfico]
+            [Aquí iría un gráfico de ventas]
           </div>
         </div>
 
-        <!-- Tabla de movimientos recientes -->
+        <!-- Tabla de ventas recientes -->
         <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-lg font-semibold mb-4 text-gray-700">Movimientos recientes</h2>
+          <div class="flex items-center justify-between md:justify-start mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Compras recientes</h2>
+            <a href="listado-compras.html" class="block ml-4 underline text-sm">Listado completo</a>
+          </div>
           <div class="overflow-x-auto">
             <table class="min-w-full text-left text-sm">
               <thead>
                 <tr>
                   <th class="py-2 px-4 font-medium text-gray-600">Fecha</th>
-                  <th class="py-2 px-4 font-medium text-gray-600">Tipo</th>
+                  <th class="py-2 px-4 font-medium text-gray-600">Cliente</th>
                   <th class="py-2 px-4 font-medium text-gray-600">Artículo</th>
                   <th class="py-2 px-4 font-medium text-gray-600">Cantidad</th>
                   <th class="py-2 px-4 font-medium text-gray-600">Total</th>
@@ -89,17 +90,17 @@
               <tbody>
                 <tr class="border-t">
                   <td class="py-2 px-4">18/05/2025</td>
-                  <td class="py-2 px-4 text-green-600">Venta</td>
+                  <td class="py-2 px-4">Distribuidora Norte</td>
                   <td class="py-2 px-4">Cajas de papel</td>
                   <td class="py-2 px-4">100</td>
                   <td class="py-2 px-4">$2,000</td>
                 </tr>
                 <tr>
-                  <td class="py-2 px-4">17/05/2025</td>
-                  <td class="py-2 px-4 text-blue-600">Compra</td>
+                  <td class="py-2 px-4">18/05/2025</td>
+                  <td class="py-2 px-4">Librería Sur</td>
                   <td class="py-2 px-4">Bolígrafos</td>
-                  <td class="py-2 px-4">500</td>
-                  <td class="py-2 px-4">$1,500</td>
+                  <td class="py-2 px-4">200</td>
+                  <td class="py-2 px-4">$1,000</td>
                 </tr>
                 <!-- Más filas aquí -->
               </tbody>
@@ -128,7 +129,6 @@
     toggle.addEventListener('click', openSidebar);
     overlay.addEventListener('click', closeSidebar);
 
-    // Cierra el sidebar si cambia a escritorio
     window.addEventListener('resize', () => {
       if(window.innerWidth >= 768) closeSidebar();
     });

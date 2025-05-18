@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listado de Productos | Sistema de Gestión</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    html,
+    body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+
+<body class="w-full max-w-full overflow-x-hidden">
+  <div class="flex min-h-screen bg-gray-100 w-full max-w-full">
+    <!-- Sidebar -->
+    <aside id="sidebar"
+      class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg transform -translate-x-full md:translate-x-0 md:static md:inset-0 transition-transform duration-200 ease-in-out">
+      <div class="h-full flex flex-col">
+        <div class="p-6 border-b">
+          <span class="text-xl font-bold text-gray-800">Menú</span>
+        </div>
+        <nav class="flex-1 p-4">
+          <ul class="space-y-2">
+            <li><a href="index.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Dashboard</a></li>
+            <li><a href="ventas.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Ventas</a></li>
+            <li><a href="compras.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Compras</a></li>
+            <li><a href="listado-productos.html" class="block px-4 py-2 rounded bg-gray-200 text-gray-700 font-medium">Inventario</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-30 z-20 hidden md:hidden"></div>
+
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col w-full max-w-full">
+      <!-- Header -->
+      <header class="flex items-center justify-between bg-white shadow px-4 py-4">
+        <div class="flex items-center">
+          <button id="sidebar-toggle" class="md:hidden mr-3 text-gray-600 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 class="text-2xl font-bold text-gray-800">Listado de Productos</h1>
+        </div>
+      </header>
+
+      <main class="p-4 w-full max-w-full overflow-x-auto">
+        <!-- Listado de productos con buscador y botón de nuevo producto -->
+        <div class="bg-white rounded-lg shadow p-6 mb-4">
+          <div class="flex mb-4 gap-2 w-full md:w-auto">
+            <input id="filtro-producto" type="text" placeholder="Buscar producto..."
+            class="border rounded px-3 py-2 w-full md:w-64" />
+            <button class="bg-green-700 text-white px-4 py-2 rounded-lg w-full md:w-auto">+ Nuevo Producto</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-sm" id="tabla-productos">
+              <thead>
+                <tr>
+                  <th class="py-2 px-4 font-medium text-gray-600">Código</th>
+                  <th class="py-2 px-4 font-medium text-gray-600">Nombre</th>
+                  <th class="py-2 px-4 font-medium text-gray-600">Stock</th>
+                  <th class="py-2 px-4 font-medium text-gray-600">Categoría</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="py-2 px-4">A001</td>
+                  <td class="py-2 px-4">Cajas de papel</td>
+                  <td class="py-2 px-4">350</td>
+                  <td class="py-2 px-4">Papelería</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4">A002</td>
+                  <td class="py-2 px-4">Bolígrafos</td>
+                  <td class="py-2 px-4">1200</td>
+                  <td class="py-2 px-4">Escritura</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-4">A003</td>
+                  <td class="py-2 px-4">Carpetas</td>
+                  <td class="py-2 px-4">500</td>
+                  <td class="py-2 px-4">Archivadores</td>
+                </tr>
+                <!-- Más filas aquí -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Script de filtrado para productos -->
+        <script>
+          const filtroProducto = document.getElementById('filtro-producto');
+          const tablaProductos = document.getElementById('tabla-productos').getElementsByTagName('tbody')[0];
+
+          filtroProducto.addEventListener('input', function () {
+            const valor = filtroProducto.value.toLowerCase();
+            for (let row of tablaProductos.rows) {
+              const nombre = row.cells[1].textContent.toLowerCase();
+              const codigo = row.cells[0].textContent.toLowerCase();
+              row.style.display = (nombre.includes(valor) || codigo.includes(valor)) ? "" : "none";
+            }
+          });
+        </script>
+      </main>
+    </div>
+  </div>
+
+  <!-- Sidebar toggle script -->
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const toggle = document.getElementById('sidebar-toggle');
+
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+    }
+    function closeSidebar() {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    }
+
+    toggle.addEventListener('click', openSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) closeSidebar();
+    });
+  </script>
+</body>
+
+</html>
