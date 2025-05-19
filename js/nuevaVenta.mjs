@@ -1,5 +1,5 @@
 import { getAllClientes } from "./clientes-crud.mjs";
-//import { getAllProductos } from "./productos-crud.mjs";
+import { getAllProducts } from "./productos-crud.mjs";
 import { createVenta } from "./ventas-crud.mjs";
 
 const clienteSelect = document.getElementById('cliente');
@@ -10,22 +10,7 @@ const detalleVenta = document.getElementById('detalle-venta');
 const totalVenta = document.getElementById('total-venta');
 const form = document.getElementById('nueva-venta-form');
 
-let productos = [
-  {
-    id: 1,
-    nombre: "Caramelos Misky",
-    descripcion: "Caramelos frutales",
-    precio: 50,
-    stock: 91
-  },
-  {
-    id: 2,
-    nombre: "Beldent Seven",
-    descripcion: "Descripción del Producto 2",
-    precio: 20,
-    stock: 103
-  }
-];
+let productos = [];
 let detalle = [];
 
 // Cargar clientes
@@ -39,7 +24,7 @@ getAllClientes().then(clientes => {
 });
 
 // Cargar productos
-/* getAllProductos().then(prodList => {
+getAllProducts().then(prodList => {
   productos = prodList;
   productos.forEach(producto => {
     const option = document.createElement('option');
@@ -47,7 +32,7 @@ getAllClientes().then(clientes => {
     option.textContent = producto.nombre;
     productoSelect.appendChild(option);
   });
-}); */
+});
 
 productos.forEach(producto => {
     const option = document.createElement('option');
