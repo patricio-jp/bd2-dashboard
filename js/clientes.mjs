@@ -2,6 +2,7 @@ import {
     getAllClientes,
     getClienteById,
     createCliente,
+    updateCliente,
     deleteCliente,
 } from "./clientes-crud.mjs";
 
@@ -38,6 +39,7 @@ const renderClientes = async (filterTerm) => {
 
     clientesFiltrados.forEach((cliente) => {
         const tr = document.createElement("tr");
+        tr.id = cliente.id;
         tr.innerHTML = `
             <td class="py-2 px-4">${cliente.id}</td>
             <td class="py-2 px-4">${cliente.dni}</td>
@@ -51,6 +53,9 @@ const renderClientes = async (filterTerm) => {
               <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded info-btn" data-id="${cliente.id}">
                   Info
               </button>
+              <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded edit-btn" data-id="${cliente.id}">
+                  Editar
+              </button>
               <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-2 rounded delete-btn" data-id="${cliente.id}">
             Borrar
               </button>
@@ -60,6 +65,8 @@ const renderClientes = async (filterTerm) => {
         // Add event listener to the Info button
         const infoBtn = tr.querySelector(".info-btn");
         infoBtn.addEventListener("click", () => infoCliente(cliente.id));
+        const editBtn = tr.querySelector(".edit-btn");
+        editBtn.addEventListener("click", () => displayFormToUpdate(cliente));
         const deleteBtn = tr.querySelector(".delete-btn");
         deleteBtn.addEventListener("click", () => {
             if (confirm("¿Está seguro de que desea eliminar este cliente?")) {
@@ -117,6 +124,74 @@ const infoCliente = async (id) => {
         }
     });
 };
+
+const displayFormToUpdate = async (cliente) => {
+    const editorContainer = document.getElementById("editor");
+    if (!cliente || !editorContainer) return;
+
+    // Highlight the selected row
+    const prevHighlighted = document.querySelector("tr.bg-blue-300");
+    if (prevHighlighted) prevHighlighted.classList.remove("bg-blue-300");
+    const selectedRow = document.getElementById(cliente.id);
+    if (selectedRow) selectedRow.classList.add("bg-blue-300");
+
+    // Render the edit form
+    editorContainer.innerHTML = `
+        <form id="editClienteForm" class="bg-white p-4 rounded shadow-md grid grid-cols-4 items-center gap-4">
+            <h3 class="col-span-4 text-lg font-semibold">Editar Cliente</h3>
+            <input type="hidden" name="id" value="${cliente.id}">
+            <div>
+                <label class="block font-semibold">DNI</label>
+                <input type="text" name="dni" value="${cliente.dni}" class="border rounded w-full p-2" required>
+            </div>
+            <div>
+                <label class="block font-semibold">Nombre</label>
+                <input type="text" name="nombre" value="${cliente.nombre}" class="border rounded w-full p-2" required>
+            </div>
+            <div>
+                <label class="block font-semibold">Apellido</label>
+                <input type="text" name="apellido" value="${cliente.apellido}" class="border rounded w-full p-2" required>
+            </div>
+            <div>
+                <label class="block font-semibold">Teléfono</label>
+                <input type="text" name="telefono" value="${cliente.telefono}" class="border rounded w-full p-2">
+            </div>
+            <div>
+                <label class="block font-semibold">Email</label>
+                <input type="email" name="email" value="${cliente.email}" class="border rounded w-full p-2">
+            </div>
+            <div>
+                <label class="block font-semibold">Domicilio</label>
+                <input type="text" name="domicilio" value="${cliente.domicilio}" class="border rounded w-full p-2">
+            </div>
+            <div>
+                <label class="block font-semibold">Localidad</label>
+                <input type="text" name="localidad" value="${cliente.localidad}" class="border rounded w-full p-2">
+            </div>
+            <div class="flex justify-end space-x-2 items-center">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded h-10 min-h-0">Guardar</button>
+                <button type="button" id="cancelEditBtn" class="bg-gray-400 text-white px-4 py-2 rounded h-10 min-h-0">Cancelar</button>
+            </div>
+        </form>
+    `;
+
+    // Handle form submission and cancel
+    const editForm = document.getElementById("editClienteForm");
+    editForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(editForm);
+            const updatedCliente = { ...cliente, ...Object.fromEntries(formData.entries()) };
+            await updateCliente(cliente.id, updatedCliente);
+            editorContainer.innerHTML = "";
+            if (selectedRow) selectedRow.classList.remove("bg-blue-300");
+            renderClientes();
+    });
+
+    document.getElementById("cancelEditBtn").onclick = () => {
+            editorContainer.innerHTML = "";
+            if (selectedRow) selectedRow.classList.remove("bg-blue-300");
+    };
+}
 
 const nuevoCliente = () => {
     window.location.href = "nuevo-cliente.html";

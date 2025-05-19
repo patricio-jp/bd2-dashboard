@@ -45,7 +45,7 @@ export const createCliente = async (cliente) => {
  * @returns {Cliente}
  */
 export const updateCliente = async (id, cliente) => {
-    const response = await fetch(`${apiUrl}cliente/${id}`, {
+    const response = await fetch(`${apiUrl}cliente?id=${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
