@@ -51,15 +51,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <span class="text-gray-500">Total Ventas</span>
-            <span class="text-2xl font-bold text-green-600">$1,200,000</span>
+            <span id="totalVentas" class="text-2xl font-bold text-green-600">$ 0</span>
           </div>
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <span class="text-gray-500">Ventas del mes</span>
-            <span class="text-2xl font-bold text-blue-600">$120,000</span>
+            <span id="ventasDelMes" class="text-2xl font-bold text-blue-600">$ 0</span>
           </div>
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <span class="text-gray-500">Ventas del día</span>
-            <span class="text-2xl font-bold text-yellow-600">$5,000</span>
+            <span id="ventasDelDia" class="text-2xl font-bold text-yellow-600">$ 0</span>
           </div>
         </div>
 
@@ -81,29 +81,14 @@
             <table class="min-w-full text-left text-sm">
               <thead>
                 <tr>
+                  <th class="py-2 px-4 font-medium text-gray-600">ID</th>
                   <th class="py-2 px-4 font-medium text-gray-600">Fecha</th>
                   <th class="py-2 px-4 font-medium text-gray-600">Cliente</th>
-                  <th class="py-2 px-4 font-medium text-gray-600">Artículo</th>
-                  <th class="py-2 px-4 font-medium text-gray-600">Cantidad</th>
                   <th class="py-2 px-4 font-medium text-gray-600">Total</th>
+                  <th class="py-2 px-4 font-medium text-gray-600">Artículos</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="border-t">
-                  <td class="py-2 px-4">18/05/2025</td>
-                  <td class="py-2 px-4">Distribuidora Norte</td>
-                  <td class="py-2 px-4">Cajas de papel</td>
-                  <td class="py-2 px-4">100</td>
-                  <td class="py-2 px-4">$2,000</td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-4">18/05/2025</td>
-                  <td class="py-2 px-4">Librería Sur</td>
-                  <td class="py-2 px-4">Bolígrafos</td>
-                  <td class="py-2 px-4">200</td>
-                  <td class="py-2 px-4">$1,000</td>
-                </tr>
-                <!-- Más filas aquí -->
+              <tbody id="ventasRecientes">
               </tbody>
             </table>
           </div>
@@ -134,5 +119,6 @@
       if(window.innerWidth >= 768) closeSidebar();
     });
   </script>
+  <script type="module" src="js/ventas.mjs"></script>
 </body>
 </html>

@@ -1,8 +1,14 @@
-import { getAllVentas, getVentaById, createVenta } from "./ventas-crud.mjs";
+import { getAllVentas, getVentaById, createVenta, deleteVenta } from "./ventas-crud.mjs";
 
 const tablaVentas = document.getElementById("bodyVentas");
 const nuevaVentaBtn = document.getElementById("nuevaVentaBtn");
 const nuevaVentaForm = document.getElementById("nuevaVentaForm");
+
+const ventasTotalesLabel = document.getElementById("totalVentas");
+const ventasDelMesLabel = document.getElementById("ventasDelMes");
+const ventasDelDiaLabel = document.getElementById("ventasDelDia");
+
+const recientesContainer = document.getElementById("ventasRecientes");
 
 const renderVentas = async () => {
     const ventas = await getAllVentas();
@@ -43,13 +49,108 @@ const renderVentas = async () => {
               <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded info-btn" data-id="${venta.id}">
             Info
               </button>
+              <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-2 rounded delete-btn" data-id="${venta.id}">
+            Borrar
+              </button>
             </td>
         `;
 
         // Add event listener to the Info button
         const infoBtn = tr.querySelector('.info-btn');
         infoBtn.addEventListener('click', () => infoVenta(venta.id));
+        const deleteBtn = tr.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => {
+            if (confirm("¿Está seguro de que desea eliminar esta venta?")) {
+                // Call the delete function here
+                deleteVenta(venta.id);
+                alert(`Venta ${venta.id} eliminada`);
+                renderVentas();
+            }
+        })
         tablaVentas.appendChild(tr);
+    });
+}
+
+const renderLabels = async () => {
+    const ventas = await getAllVentas();
+    if (!Array.isArray(ventas) || ventas.length === 0 || typeof ventas[0] !== 'object') {
+        return;
+    }
+
+    let ventasTotales = 0, ventasDelMes = 0, ventasDelDia = 0;
+
+    ventas.forEach((venta) => {
+        const fechaVenta = new Date(venta.fecha);
+        const hoy = new Date();
+        ventasTotales += Number(venta.total);
+
+        if (
+            fechaVenta.getFullYear() === hoy.getFullYear() &&
+            fechaVenta.getMonth() === hoy.getMonth()
+        ) {
+            ventasDelMes += Number(venta.total);
+        }
+
+        if (
+            fechaVenta.getFullYear() === hoy.getFullYear() &&
+            fechaVenta.getMonth() === hoy.getMonth() &&
+            fechaVenta.getDate() === hoy.getDate()
+        ) {
+            ventasDelDia += Number(venta.total);
+        }
+    });
+
+    if (ventasTotalesLabel) {
+        ventasTotalesLabel.textContent = ventasTotales.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+    }
+    if (ventasDelMesLabel) {
+        ventasDelMesLabel.textContent = ventasDelMes.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+    }
+    if (ventasDelDiaLabel) {
+        ventasDelDiaLabel.textContent = ventasDelDia.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+    }
+}
+
+const renderRecientes = async () => {
+    const ventas = await getAllVentas();
+    if (!Array.isArray(ventas) || ventas.length === 0 || typeof ventas[0] !== 'object') {
+        return;
+    }
+
+    if (recientesContainer === null) { 
+        return;
+    }
+
+    const recientes = ventas.slice(-3).reverse();
+
+    recientes.forEach((venta) => {
+        const tr = document.createElement("tr");
+
+        let stringProductos = "";
+        if (venta.detalles.length > 0) {
+            stringProductos = venta.detalles.map((producto) => {
+                return `${producto.cantidad} x ${producto.producto.nombre}`;
+            }).join("<br>");
+        } else {
+            stringProductos = "No hay productos";
+        }
+
+        // Format fecha as human readable (e.g., DD/MM/YYYY)
+        const fechaObj = new Date(venta.fecha);
+        const fechaFormateada = fechaObj.toLocaleDateString('es-AR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        tr.innerHTML = `
+            <td class="py-2 px-4">${venta.id}</td>
+            <td class="py-2 px-4">${fechaFormateada}</td>
+            <td class="py-2 px-4">${venta.cliente.apellido}, ${venta.cliente.nombre}</td>
+            <td class="py-2 px-4">${Number(venta.total).toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}</td>
+            <td class="py-2 px-4">${stringProductos}</td>
+        `;
+        if (recientesContainer) recientesContainer.appendChild(tr);
     });
 }
 
@@ -116,6 +217,11 @@ const nuevaVenta = () => {
 }
 
 const init = () => {
+    if (ventasTotalesLabel && ventasDelMesLabel && ventasDelDiaLabel) {
+        renderLabels();
+        renderRecientes();
+    }
+
     renderVentas();
     if (nuevaVentaBtn !== null) {
         nuevaVentaBtn.addEventListener("click", nuevaVenta);
