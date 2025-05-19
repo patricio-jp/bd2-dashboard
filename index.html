@@ -52,15 +52,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <span class="text-gray-500">Ventas del mes</span>
-            <span class="text-2xl font-bold text-green-600">$120,000</span>
+            <span id="totalVentas" class="text-2xl font-bold text-green-600">$120,000</span>
           </div>
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <span class="text-gray-500">Compras del mes</span>
-            <span class="text-2xl font-bold text-blue-600">$80,000</span>
+            <span id="totalCompras" class="text-2xl font-bold text-blue-600">$80,000</span>
           </div>
           <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <span class="text-gray-500">Stock total</span>
-            <span class="text-2xl font-bold text-yellow-600">3,500</span>
+            <span id="totalStock" class="text-2xl font-bold text-yellow-600">3,500</span>
           </div>
         </div>
 
@@ -133,5 +133,6 @@
       if(window.innerWidth >= 768) closeSidebar();
     });
   </script>
+  <script type="module" src="./js/script.mjs"></script>
 </body>
 </html>
