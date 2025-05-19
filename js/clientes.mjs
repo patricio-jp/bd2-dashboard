@@ -1,19 +1,42 @@
-import { getAllClientes, getClienteById, createCliente } from "./clientes-crud.mjs";
+import {
+    getAllClientes,
+    getClienteById,
+    createCliente,
+    deleteCliente,
+} from "./clientes-crud.mjs";
 
 const tablaClientes = document.getElementById("bodyClientes");
 const nuevoClienteBtn = document.getElementById("nuevoClienteBtn");
 const nuevoClienteForm = document.getElementById("nuevoClienteForm");
 
-const renderClientes = async () => {
+const filterForm = document.getElementById("filter-form");
+
+const renderClientes = async (filterTerm) => {
     const clientes = await getAllClientes();
     if (tablaClientes === null) {
         return;
     }
     tablaClientes.innerHTML = "";
-    if (!Array.isArray(clientes) || clientes.length === 0 || typeof clientes[0] !== 'object') {
+    if (
+        !Array.isArray(clientes) ||
+        clientes.length === 0 ||
+        typeof clientes[0] !== "object"
+    ) {
         return;
     }
-    clientes.forEach((cliente) => {
+
+    let clientesFiltrados = clientes;
+
+    if (filterTerm && filterTerm !== "") {
+        clientesFiltrados = clientes.filter(
+            (cliente) =>
+                cliente.apellido.includes(filterTerm) ||
+                cliente.nombre.includes(filterTerm) ||
+                cliente.dni.toString().includes(filterTerm)
+        );
+    }
+
+    clientesFiltrados.forEach((cliente) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td class="py-2 px-4">${cliente.id}</td>
@@ -28,15 +51,27 @@ const renderClientes = async () => {
               <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded info-btn" data-id="${cliente.id}">
                   Info
               </button>
+              <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-2 rounded delete-btn" data-id="${cliente.id}">
+            Borrar
+              </button>
             </td>
         `;
 
         // Add event listener to the Info button
-        const infoBtn = tr.querySelector('.info-btn');
-        infoBtn.addEventListener('click', () => infoCliente(cliente.id));
+        const infoBtn = tr.querySelector(".info-btn");
+        infoBtn.addEventListener("click", () => infoCliente(cliente.id));
+        const deleteBtn = tr.querySelector(".delete-btn");
+        deleteBtn.addEventListener("click", () => {
+            if (confirm("¿Está seguro de que desea eliminar este cliente?")) {
+                // Call the delete function here
+                deleteCliente(cliente.id);
+                alert(`Cliente ${cliente.id} eliminado`);
+                renderClientes();
+            }
+        });
         tablaClientes.appendChild(tr);
     });
-}
+};
 
 const infoCliente = async (id) => {
     const cliente = await getClienteById(id);
@@ -45,7 +80,8 @@ const infoCliente = async (id) => {
     }
     // Create modal container
     const modal = document.createElement("div");
-    modal.className = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
+    modal.className =
+        "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
 
     // Modal content
     modal.innerHTML = `
@@ -80,16 +116,26 @@ const infoCliente = async (id) => {
             modal.remove();
         }
     });
-}
+};
 
 const nuevoCliente = () => {
     window.location.href = "nuevo-cliente.html";
-}
+};
 
 const init = () => {
     renderClientes();
     if (nuevoClienteBtn !== null) {
         nuevoClienteBtn.addEventListener("click", nuevoCliente);
+    }
+
+    if (filterForm !== null) {
+        filterForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const filterValue = document.getElementById("search");
+            if (filterValue) {
+                renderClientes(filterValue.value || "");
+            }
+        });
     }
 
     if (nuevoClienteForm !== null) {
@@ -103,6 +149,6 @@ const init = () => {
             window.location.href = "listado-clientes.html";
         });
     }
-}
+};
 
 document.addEventListener("DOMContentLoaded", init);
