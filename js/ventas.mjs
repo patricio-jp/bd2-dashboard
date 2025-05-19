@@ -1,6 +1,9 @@
-import { getAllVentas, getVentaById, createVenta, deleteVenta } from "./ventas-crud.mjs";
+import { getAllVentas, getVentaByClienteAndProducto, getVentaById, createVenta, deleteVenta } from "./ventas-crud.mjs";
+import { getAllClientes } from "./clientes-crud.mjs";
+import { getAllProducts } from "./productos-crud.mjs";
 
 const tablaVentas = document.getElementById("bodyVentas");
+const filterForm = document.getElementById("ventasFilter");
 const nuevaVentaBtn = document.getElementById("nuevaVentaBtn");
 const nuevaVentaForm = document.getElementById("nuevaVentaForm");
 
@@ -69,7 +72,99 @@ const renderVentas = async () => {
         })
         tablaVentas.appendChild(tr);
     });
+    populateClientes(),
+    populateProductos();
 }
+
+const populateClientes = async () => {
+    const clientes = await getAllClientes();
+
+    const select = document.getElementById("clienteSelector");
+    if (select === null) return;
+
+    clientes.forEach((cliente) => {
+        const option = document.createElement("option");
+        option.value = cliente.id;
+        option.textContent = `${cliente.apellido}, ${cliente.nombre}`;
+        select.appendChild(option);
+    });
+}
+
+const populateProductos = async () => {
+    const productos = await getAllProducts();
+
+    const select = document.getElementById("productoSelector");
+    if (select === null) return;
+
+    productos.forEach((prod) => {
+        const option = document.createElement("option");
+        option.value = prod.id;
+        option.textContent = prod.nombre;
+        select.appendChild(option);
+    });
+}
+
+const filterByClienteAndProducto = async () => {
+    const idCliente = document.getElementById("clienteSelector")?.value;
+    const idProducto = document.getElementById("productoSelector")?.value;
+
+    const ventasFiltradas = await getVentaByClienteAndProducto(Number(idCliente), Number(idProducto));
+
+    tablaVentas.innerHTML = "";
+    if (!Array.isArray(ventasFiltradas) || ventasFiltradas.length === 0 || typeof ventasFiltradas[0] !== 'object') {
+        return;
+    }
+    ventasFiltradas.forEach((venta) => {
+        const tr = document.createElement("tr");
+
+        let stringProductos = "";
+        if (venta.detalles.length > 0) {
+            stringProductos = venta.detalles.map((producto) => {
+                return `${producto.cantidad} x ${producto.producto.nombre}`;
+            }).join("<br>");
+        } else {
+            stringProductos = "No hay productos";
+        }
+
+        // Format fecha as human readable (e.g., DD/MM/YYYY)
+        const fechaObj = new Date(venta.fecha);
+        const fechaFormateada = fechaObj.toLocaleDateString('es-AR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        tr.innerHTML = `
+            <td class="py-2 px-4">${venta.id}</td>
+            <td class="py-2 px-4">${fechaFormateada}</td>
+            <td class="py-2 px-4">${venta.cliente.apellido}, ${venta.cliente.nombre}</td>
+            <td class="py-2 px-4">${Number(venta.total).toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}</td>
+            <td class="py-2 px-4">${stringProductos}</td>
+            <td class="py-2 px-4">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded info-btn" data-id="${venta.id}">
+            Info
+              </button>
+              <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-2 rounded delete-btn" data-id="${venta.id}">
+            Borrar
+              </button>
+            </td>
+        `;
+
+        // Add event listener to the Info button
+        const infoBtn = tr.querySelector('.info-btn');
+        infoBtn.addEventListener('click', () => infoVenta(venta.id));
+        const deleteBtn = tr.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => {
+            if (confirm("¿Está seguro de que desea eliminar esta venta?")) {
+                // Call the delete function here
+                deleteVenta(venta.id);
+                alert(`Venta ${venta.id} eliminada`);
+                renderVentas();
+            }
+        })
+        tablaVentas.appendChild(tr);
+    });
+} 
 
 const renderLabels = async () => {
     const ventas = await getAllVentas();
@@ -225,6 +320,16 @@ const init = () => {
     renderVentas();
     if (nuevaVentaBtn !== null) {
         nuevaVentaBtn.addEventListener("click", nuevaVenta);
+    }
+
+    if (filterForm !== null) {
+        filterForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            filterByClienteAndProducto();
+        });
+
+        const limpiarBtn = document.getElementById("limpiar-filtros");
+        limpiarBtn.addEventListener("click", renderVentas);
     }
 
     if (nuevaVentaForm !== null) {

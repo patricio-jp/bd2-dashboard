@@ -12,6 +12,18 @@ export const getAllVentas = async () => {
 
 /**
  * 
+ * @param {number} idCliente 
+ * @param {number} idProducto 
+ * @returns {Venta[]}
+ */
+export const getVentaByClienteAndProducto = async (idCliente, idProducto) => {
+    const response = await fetch(`${apiUrl}venta/venta-cliente-articulo?idCliente=${idCliente}&idArticulo=${idProducto}`);
+    const data = await response.json();
+    return data;
+}
+
+/**
+ * 
  * @param {number} id 
  * @returns {Venta}
  */
