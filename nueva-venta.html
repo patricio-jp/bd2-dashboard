@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ventas | Sistema de Gestión</title>
+  <title>Nueva Venta | Sistema de Gestión</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
     html, body { width: 100%; max-width: 100vw; overflow-x: hidden; }
@@ -21,7 +21,7 @@
           <ul class="space-y-2">
             <li><a href="index.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Dashboard</a></li>
             <li><a href="listado-clientes.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Clientes</a></li>
-            <li><a href="ventas.html" class="block px-4 py-2 rounded bg-gray-200 text-gray-700 font-medium">Ventas</a></li>
+            <li><a href="ventas.html" class="block px-4 py-2 rounded bg-gray-200 font-medium text-gray-700">Ventas</a></li>
             <li><a href="compras.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Compras</a></li>
             <li><a href="listado-productos.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Inventario</a></li>
           </ul>
@@ -42,57 +42,63 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </button>
-          <h1 class="text-2xl font-bold text-gray-800">Ventas</h1>
+          <h1 class="text-2xl font-bold text-gray-800">Nueva Venta</h1>
         </div>
       </header>
 
       <main class="p-4 w-full max-w-full overflow-x-auto">
-        <!-- Resumen de ventas -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-          <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <span class="text-gray-500">Total Ventas</span>
-            <span id="totalVentas" class="text-2xl font-bold text-green-600">$ 0</span>
+        <form id="nueva-venta-form" class="bg-white rounded shadow p-6 space-y-6">
+          <div>
+            <label for="cliente" class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+            <select id="cliente" name="cliente" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300">
+              <option value="">Seleccione un cliente...</option>
+              <!-- Opciones de clientes se cargarán dinámicamente -->
+            </select>
           </div>
-          <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <span class="text-gray-500">Ventas del mes</span>
-            <span id="ventasDelMes" class="text-2xl font-bold text-blue-600">$ 0</span>
-          </div>
-          <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <span class="text-gray-500">Ventas del día</span>
-            <span id="ventasDelDia" class="text-2xl font-bold text-yellow-600">$ 0</span>
-          </div>
-        </div>
 
-        <!-- Gráfico de ejemplo -->
-        <div class="bg-white rounded-lg shadow p-6 mb-4">
-          <h2 class="text-lg font-semibold mb-4 text-gray-700">Evolución de Ventas</h2>
-          <div class="w-full h-48 flex items-center justify-center text-gray-400">
-            [Aquí iría un gráfico de ventas]
+          <div>
+            <label for="producto" class="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+            <div class="flex space-x-2">
+              <select id="producto" class="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300">
+                <option value="">Seleccione un producto...</option>
+                <!-- Opciones de productos se cargarán dinámicamente -->
+              </select>
+              <input type="number" id="cantidad" min="1" value="1" class="w-24 border rounded px-2 py-2 focus:outline-none" placeholder="Cantidad">
+              <button type="button" id="agregar-producto" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Agregar</button>
+            </div>
           </div>
-        </div>
 
-        <!-- Tabla de ventas recientes -->
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center justify-between md:justify-start mb-4">
-            <h2 class="text-lg font-semibold text-gray-700">Ventas recientes</h2>
-            <a href="listado-ventas.html" class="block ml-4 underline text-sm">Listado completo</a>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-left text-sm rounded-lg overflow-hidden">
+          <div>
+            <h2 class="text-lg font-semibold mb-2">Detalle de Venta</h2>
+            <table class="min-w-full bg-white border rounded-lg overflow-hidden">
               <thead class="bg-gray-200">
                 <tr>
-                  <th class="px-6 py-3 border-b text-gray-600">ID</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Fecha</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Cliente</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Total</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Artículos</th>
+                  <th class="px-6 py-3 text-gray-600 border-b text-left">Producto</th>
+                  <th class="px-6 py-3 text-gray-600 border-b text-right">Cantidad</th>
+                  <th class="px-6 py-3 text-gray-600 border-b text-right">Precio Unitario</th>
+                  <th class="px-6 py-3 text-gray-600 border-b text-right">Subtotal</th>
+                  <th class="px-6 py-3 text-gray-600 border-b"></th>
                 </tr>
               </thead>
-              <tbody id="ventasRecientes">
+              <tbody id="detalle-venta">
+                <!-- Filas de productos agregados -->
               </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="px-4 py-2 text-right font-bold">Total</td>
+                  <td class="px-4 py-2 text-right font-bold" id="total-venta">$0.00</td>
+                  <td></td>
+                </tr>
+              </tfoot>
             </table>
           </div>
-        </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-semibold">Registrar Venta</button>
+          </div>
+        </form>
+
+        <script type="module" src="js/nuevaVenta.mjs"></script>
       </main>
     </div>
   </div>
@@ -119,6 +125,6 @@
       if(window.innerWidth >= 768) closeSidebar();
     });
   </script>
-  <script type="module" src="js/ventas.mjs"></script>
+  <script type="module" src="js/clientes.mjs"></script>
 </body>
 </html>
