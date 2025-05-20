@@ -28,6 +28,7 @@
         <nav class="flex-1 p-4">
           <ul class="space-y-2">
             <li><a href="index.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Dashboard</a></li>
+            <li><a href="listado-clientes.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Clientes</a></li>
             <li><a href="ventas.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Ventas</a></li>
             <li><a href="compras.html" class="block px-4 py-2 rounded hover:bg-gray-100 text-gray-700">Compras</a></li>
             <li><a href="listado-productos.html" class="block px-4 py-2 rounded bg-gray-200 text-gray-700 font-medium">Inventario</a>
@@ -57,59 +58,93 @@
       <main class="p-4 w-full max-w-full overflow-x-auto">
         <!-- Listado de productos con buscador y botón de nuevo producto -->
         <div class="bg-white rounded-lg shadow p-6 mb-4">
-          <div class="flex mb-4 gap-2 w-full md:w-auto">
-            <input id="filtro-producto" type="text" placeholder="Buscar producto..."
-            class="border rounded px-3 py-2 w-full md:w-64" />
-            <button class="bg-green-700 text-white px-4 py-2 rounded-lg w-full md:w-auto">+ Nuevo Producto</button>
+          <div class="flex items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Filtrado de Productos</h2>
+            <button id="nuevoProductoBtn" class="ml-4 bg-green-700 text-white rounded px-4 py-2">+ Nuevo Producto</button> <!-- Id era nuevoClienteBtn-->
           </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-left text-sm" id="tabla-productos">
-              <thead>
-                <tr>
-                  <th class="py-2 px-4 font-medium text-gray-600">Código</th>
-                  <th class="py-2 px-4 font-medium text-gray-600">Nombre</th>
-                  <th class="py-2 px-4 font-medium text-gray-600">Stock</th>
-                  <th class="py-2 px-4 font-medium text-gray-600">Categoría</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="py-2 px-4">A001</td>
-                  <td class="py-2 px-4">Cajas de papel</td>
-                  <td class="py-2 px-4">350</td>
-                  <td class="py-2 px-4">Papelería</td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-4">A002</td>
-                  <td class="py-2 px-4">Bolígrafos</td>
-                  <td class="py-2 px-4">1200</td>
-                  <td class="py-2 px-4">Escritura</td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-4">A003</td>
-                  <td class="py-2 px-4">Carpetas</td>
-                  <td class="py-2 px-4">500</td>
-                  <td class="py-2 px-4">Archivadores</td>
-                </tr>
-                <!-- Más filas aquí -->
-              </tbody>
-            </table>
-          </div>
+          <form id="filter-form" class="flex items-center space-x-4 mb-4">
+            <input type="text" id="search" placeholder="Buscar producto..." class="border border-gray-300 rounded px-4 py-2 w-full">
+            <button type="submit" class="bg-blue-500 text-white rounded px-4 py-2">Buscar</button>
+            <script>
+              // Hacer que el botón "Buscar" ejecute el mismo filtrado que el input
+              document.getElementById('filter-form').addEventListener('submit', function (e) {
+              e.preventDefault();
+              const filtroProducto = document.getElementById('search');
+              const tablaProductos = document.getElementById('bodyProductos');
+              const valor = filtroProducto.value.toLowerCase();
+              for (let row of tablaProductos.rows) {
+                const nombre = row.cells[2].textContent.toLowerCase();
+                const codigo = row.cells[0].textContent.toLowerCase();
+                row.style.display = (nombre.includes(valor) || codigo.includes(valor)) ? "" : "none";
+              }
+              });
+            </script>
+          </form>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 mb-4">
+          <table class="min-w-full bg-white text-sm rounded-lg overflow-hidden">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="px-6 py-3 border-b text-left text-gray-600">ID</th>
+                <th class="px-6 py-3 border-b text-left text-gray-600">Tipo</th>
+                <th class="px-6 py-3 border-b text-left text-gray-600">Nombre</th>
+                <th class="px-6 py-3 border-b text-left text-gray-600">Descripción</th>
+                <th class="px-6 py-3 border-b text-left text-gray-600">Precio</th>
+                <th class="px-6 py-3 border-b text-left text-gray-600">Stock</th>
+              </tr>
+            </thead>
+            <tbody id="bodyProductos">
+              <!-- Client rows will be populated here -->
+            </tbody>
+          </table>
         </div>
 
         <!-- Script de filtrado para productos -->
         <script>
-          const filtroProducto = document.getElementById('filtro-producto');
-          const tablaProductos = document.getElementById('tabla-productos').getElementsByTagName('tbody')[0];
+          const filtroProducto = document.getElementById('search');
+          const tablaProductos = document.getElementById('bodyProductos');
 
           filtroProducto.addEventListener('input', function () {
             const valor = filtroProducto.value.toLowerCase();
             for (let row of tablaProductos.rows) {
-              const nombre = row.cells[1].textContent.toLowerCase();
+              const nombre = row.cells[2].textContent.toLowerCase();
               const codigo = row.cells[0].textContent.toLowerCase();
               row.style.display = (nombre.includes(valor) || codigo.includes(valor)) ? "" : "none";
             }
           });
+
+          // Agregar botón de eliminar a cada fila cuando se cargan los productos
+          function agregarBotonEliminar() {
+            for (let row of tablaProductos.rows) {
+              // Evitar duplicar el botón si ya existe
+              if (row.querySelector('.btn-eliminar')) continue;
+              const td = document.createElement('td');
+              const btn = document.createElement('button');
+              btn.textContent = 'Eliminar';
+              btn.className = 'btn-eliminar bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700';
+              btn.onclick = async function () {
+                if (confirm('¿Está seguro que desea eliminar este producto?')) {
+                  const id = row.cells[0].textContent;
+                  try {
+                    // Suponiendo que tienes una API REST para eliminar productos
+                    const resp = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
+                    if (resp.ok) {
+                      row.remove();
+                    } else {
+                      alert('Error al eliminar el producto');
+                    }
+                  } catch (e) {
+                    alert('Error de conexión');
+                  }
+                }
+              };
+              td.appendChild(btn);
+              row.appendChild(td);
+            }
+          }
+
+          // Llama a agregarBotonEliminar() después de poblar la tabla desde productos.mjs
+          window.agregarBotonEliminar = agregarBotonEliminar;
         </script>
       </main>
     </div>
@@ -137,6 +172,8 @@
       if (window.innerWidth >= 768) closeSidebar();
     });
   </script>
+
+  <script type="module" src="js/productos.mjs"></script>
 </body>
 
 </html>

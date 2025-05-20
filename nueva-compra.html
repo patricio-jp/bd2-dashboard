@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compras | Sistema de Gestión</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nueva Compra | Sistema de Gestión</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
     html, body { width: 100%; max-width: 100vw; overflow-x: hidden; }
@@ -29,10 +29,10 @@
       </div>
     </aside>
 
-    <!-- Overlay for mobile -->
+    <!-- Overlay para móvil -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-30 z-20 hidden md:hidden"></div>
 
-    <!-- Main content -->
+    <!-- Contenido principal -->
     <div class="flex-1 flex flex-col w-full max-w-full">
       <!-- Header -->
       <header class="flex items-center justify-between bg-white shadow px-4 py-4">
@@ -42,64 +42,71 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </button>
-          <h1 class="text-2xl font-bold text-gray-800">Compras</h1>
+          <h1 class="text-2xl font-bold text-gray-800">Nueva Compra</h1>
         </div>
       </header>
 
+      <!-- Formulario de Compra -->
       <main class="p-4 w-full max-w-full overflow-x-auto">
-        <!-- Resumen de compras -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-          <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <span class="text-gray-500">Total Compras</span>
-            <span id="totalCompras" class="text-2xl font-bold text-green-600">$0</span>
+        <form id="form-compra" class="bg-white rounded shadow p-6 space-y-6">
+          <!-- Proveedor -->
+          <div>
+            <label for="proveedor" class="block text-sm font-medium text-gray-700 mb-1">Proveedor</label>
+            <input type="text" id="proveedor" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300" placeholder="Proveedor">
           </div>
-          <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <span class="text-gray-500">Compras del mes</span>
-            <span id="comprasDelMes" class="text-2xl font-bold text-blue-600">$0</span>
-          </div>
-          <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <span class="text-gray-500">Compras del día</span>
-            <span id="comprasDelDia" class="text-2xl font-bold text-yellow-600">$0</span>
-          </div>
-        </div>
 
-        <!-- Gráfico de ejemplo -->
-        <div class="bg-white rounded-lg shadow p-6 mb-4">
-          <h2 class="text-lg font-semibold mb-4 text-gray-700">Evolución de Compras</h2>
-          <div class="w-full h-48 flex items-center justify-center text-gray-400">
-            [Aquí iría un gráfico de ventas]
+          <!-- Producto + Cantidad + Precio -->
+          <div>
+            <label for="producto" class="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+            <div class="flex space-x-2">
+              <select id="producto" class="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300">
+                <option value="">Seleccione un producto...</option>
+                <!-- Opciones dinámicas -->
+              </select>
+              <input type="number" id="cantidad" min="1" step="1" class="w-24 border rounded px-2 py-2 focus:outline-none" placeholder="Cantidad">
+              <input type="number" id="precio" min="0" step="0.01" class="w-32 border rounded px-2 py-2 focus:outline-none" placeholder="Precio">
+              <button type="button" id="agregar-producto" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Agregar</button>
+            </div>
           </div>
-        </div>
 
-        <!-- Tabla de ventas recientes -->
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center justify-between md:justify-start mb-4">
-            <h2 class="text-lg font-semibold text-gray-700">Compras recientes</h2>
-            <a href="listado-compras.html" class="block ml-4 underline text-sm">Listado completo</a>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-left text-sm">
+          <!-- Detalle -->
+          <div>
+            <h2 class="text-lg font-semibold mb-2">Detalle de Compra</h2>
+            <table class="min-w-full bg-white border rounded-lg overflow-hidden">
               <thead class="bg-gray-200">
                 <tr>
-                  <th class="px-6 py-3 border-b text-gray-600">ID</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Fecha</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Proveedor</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Artículo</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Cantidad</th>
-                  <th class="px-6 py-3 border-b text-gray-600">Total</th>
+                  <th class="px-6 py-3 text-gray-600 border-b text-left">Producto</th>
+                  <th class="px-6 py-3 text-gray-600 border-b text-right">Cantidad</th>
+                  <th class="px-6 py-3 text-gray-600 border-b text-right">Precio Unitario</th>
+                  <th class="px-6 py-3 text-gray-600 border-b text-right">Subtotal</th>
+                  <th class="px-6 py-3 text-gray-600 border-b"></th>
                 </tr>
               </thead>
-              <tbody id="comprasRecientes">
-                <!-- Más filas aquí -->
+              <tbody id="detalle-compra">
+                <!-- Filas de productos agregados -->
               </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="px-4 py-2 text-right font-bold">Total</td>
+                  <td class="px-4 py-2 text-right font-bold" id="total-compra">$0.00</td>
+                  <td></td>
+                </tr>
+              </tfoot>
             </table>
           </div>
-        </div>
+
+          <!-- Total y Guardar -->
+          <div class="flex justify-end">
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-semibold">Registrar Compra</button>
+          </div>
+        </form>
+
+        <script type="module" src="js/nuevaCompra.mjs"></script>
       </main>
     </div>
   </div>
-
-  <!-- Sidebar toggle script -->
+  
+    <!-- Sidebar toggle script -->
   <script>
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
@@ -121,6 +128,6 @@
       if(window.innerWidth >= 768) closeSidebar();
     });
   </script>
-  <script type="module" src="js/compras.mjs"></script>
+  <script type="module" src="js/nuevaCompra.mjs"></script>
 </body>
 </html>

@@ -44,15 +44,19 @@ export const createProduct = async (product) => {
  * @param {Producto} product 
  * @returns {Producto}
  */
+
 export const updateProduct = async (id, product) => {
-    const response = await fetch(`${apiUrl}producto/${id}`, {
-        method: 'PUT',
+    const response = await fetch(`${apiUrl}producto`, {
+        method: 'PUT', // Change to 'PATCH' if your API expects PATCH for updates
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(product)
+        body: JSON.stringify({ id, ...product })
     });
-    const data = await response.json();
+    let data = null;
+    if (response.headers.get('content-length') !== '0' && response.headers.get('content-type')?.includes('application/json')) {
+        data = await response.json();
+    }
     return data;
 }
 
@@ -63,6 +67,18 @@ export const updateProduct = async (id, product) => {
  */
 export const deleteProduct = async (id) => {
     const response = await fetch(`${apiUrl}producto/${id}`, {
+        method: 'DELETE'
+    });
+    return response.ok;
+}
+
+/**
+ * 
+ * @param {number} id 
+ * @returns {boolean}
+ */
+export const deleteCompra = async (id) => {
+    const response = await fetch(`${apiUrl}compra/${id}`, {
         method: 'DELETE'
     });
     return response.ok;
